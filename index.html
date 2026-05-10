@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnneaMark</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Left panel -->
+    <aside class="panel panel--info">
+      <div class="brand">EnneaMark</div>
+      <h1>Personalize Your&nbsp;Slack Profile</h1>
+      <p>Upload your photo, pick your Enneagram type(s), and download a ready-to-use Slack profile picture with the Shiftmove logo.</p>
+
+      <div class="how-to">
+        <div class="step"><span class="step-num">1</span>Upload your photo</div>
+        <div class="step"><span class="step-num">2</span>Select up to 3 Enneagram types</div>
+        <div class="step"><span class="step-num">3</span>Download &amp; set as your Slack pic</div>
+      </div>
+    </aside>
+
+    <!-- Right panel -->
+    <main class="panel panel--controls">
+      <!-- Canvas preview -->
+      <div class="preview-wrap">
+        <canvas id="canvas" width="512" height="512"></canvas>
+        <label id="upload-label" for="photoInput" class="upload-overlay" aria-label="Upload photo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload photo</span>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" />
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="control-group">
+          <label for="type1">Enneagram type</label>
+          <select id="type1">
+            <option value="">— Select type —</option>
+          </select>
+        </div>
+
+        <div class="control-group" id="group2" hidden>
+          <label for="type2">Second type <span class="optional">(optional)</span></label>
+          <select id="type2">
+            <option value="">— None —</option>
+          </select>
+        </div>
+
+        <div class="control-group" id="group3" hidden>
+          <label for="type3">Third type <span class="optional">(optional)</span></label>
+          <select id="type3">
+            <option value="">— None —</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="showLogo" checked />
+            <span class="toggle-track"></span>
+          </label>
+          <span>Show Shiftmove logo</span>
+        </div>
+
+        <button id="downloadBtn" disabled>Download image</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
