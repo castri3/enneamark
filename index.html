@@ -12,11 +12,11 @@
     <aside class="panel panel--info">
       <div class="brand">EnneaMark</div>
       <h1>Personalize Your&nbsp;Slack Profile</h1>
-      <p>Upload your photo, pick your Enneagram type(s), and download a ready-to-use Slack profile picture with the Shiftmove logo.</p>
+      <p>Upload your photo, pick your Enneagram type(s), and download a ready-to-use Slack profile picture.</p>
 
       <div class="how-to">
         <div class="step"><span class="step-num">1</span>Upload your photo</div>
-        <div class="step"><span class="step-num">2</span>Select up to 3 Enneagram types</div>
+        <div class="step"><span class="step-num">2</span>Select your Enneagram type</div>
         <div class="step"><span class="step-num">3</span>Download &amp; set as your Slack pic</div>
       </div>
     </aside>
@@ -42,27 +42,18 @@
           </select>
         </div>
 
-        <div class="control-group" id="group2" hidden>
-          <label for="type2">Second type <span class="optional">(optional)</span></label>
-          <select id="type2">
-            <option value="">— None —</option>
-          </select>
+        <!-- Second type: hidden until user clicks "+ Add" -->
+        <div class="control-group type2-row" id="group2" hidden>
+          <label for="type2">Second type</label>
+          <div class="select-row">
+            <select id="type2">
+              <option value="">— None —</option>
+            </select>
+            <button type="button" id="removeType2" class="remove-btn" aria-label="Remove second type">✕</button>
+          </div>
         </div>
 
-        <div class="control-group" id="group3" hidden>
-          <label for="type3">Third type <span class="optional">(optional)</span></label>
-          <select id="type3">
-            <option value="">— None —</option>
-          </select>
-        </div>
-
-        <div class="toggle-row">
-          <label class="toggle">
-            <input type="checkbox" id="showLogo" checked />
-            <span class="toggle-track"></span>
-          </label>
-          <span>Show Shiftmove logo</span>
-        </div>
+        <button type="button" id="addType2Btn" class="add-btn" hidden>+ Add a second type</button>
 
         <button id="downloadBtn" disabled>Download image</button>
       </div>
