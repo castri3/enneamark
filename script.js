@@ -10,21 +10,20 @@ const TYPES = [
   { num: 9, color: '#5A8A20', label: 'Adaptive Peacemaker' },
 ];
 
-// ── DOM refs ──
-const canvas       = document.getElementById('canvas');
-const ctx          = canvas.getContext('2d');
-const photoInput   = document.getElementById('photoInput');
-const previewWrap  = document.querySelector('.preview-wrap');
-const type1El      = document.getElementById('type1');
-const type2El      = document.getElementById('type2');
-const group2El     = document.getElementById('group2');
-const addType2Btn  = document.getElementById('addType2Btn');
-const removeType2  = document.getElementById('removeType2');
-const downloadBtn  = document.getElementById('downloadBtn');
+const canvas      = document.getElementById('canvas');
+const ctx         = canvas.getContext('2d');
+const photoInput  = document.getElementById('photoInput');
+const previewWrap = document.querySelector('.preview-wrap');
+const type1El     = document.getElementById('type1');
+const type2El     = document.getElementById('type2');
+const group2El    = document.getElementById('group2');
+const addType2Btn = document.getElementById('addType2Btn');
+const removeType2 = document.getElementById('removeType2');
+const downloadBtn = document.getElementById('downloadBtn');
 
 let userPhoto = null;
 
-// ── Populate selects ──
+// ── Populate a select, excluding already-chosen values ──
 function fillSelect(el, exclude = [], placeholder = '— None —') {
   const prev = el.value;
   el.innerHTML = `<option value="">${placeholder}</option>`;
@@ -38,21 +37,22 @@ function fillSelect(el, exclude = [], placeholder = '— None —') {
   if ([...el.options].some(o => o.value === prev)) el.value = prev;
 }
 
-function initType1() {
-  fillSelect(type1El, [], '— Select type —');
-}
-
-// ── Sync UI state after any selection change ──
+// ── Sync visibility of "add" button and group2 ──
 function sync() {
   const v1 = type1El.value;
-  const v2 = type2El.value;
 
-  // "Add a second type" button appears once type 1 is chosen and group2 is hidden
-  addType2Btn.hidden = !v1 || !group2El.hidden === false ? (!v1 || !group2El.hidden) : false;
-  // Simpler: show the add button only when type1 has a value AND group2 is hidden
-  addType2Btn.hidden = !(v1 && group2El.hidden);
-
-  if (v1) {
+  if (!v1) {
+    // No primary type: hide everything secondary
+    group2El.hidden = true;
+    addType2Btn.hidden = true;
+    type2El.value = '';
+  } else if (group2El.hidden) {
+    // Primary chosen, second not yet added: show the add button
+    addType2Btn.hidden = false;
+    fillSelect(type2El, [v1]);
+  } else {
+    // Second row is open: keep add button hidden, refresh options
+    addType2Btn.hidden = true;
     fillSelect(type2El, [v1]);
   }
 
@@ -105,20 +105,22 @@ function redraw() {
   const sh = userPhoto.height * s;
   ctx.drawImage(userPhoto, (CANVAS_SIZE - sw) / 2, (CANVAS_SIZE - sh) / 2, sw, sh);
 
-  // Draw badges bottom-left
-  const badges = [type1El.value, type2El.hidden ? '' : type2El.value]
-    .filter(Boolean)
-    .map(Number);
+  // Collect selected badge numbers (type2 only counts when its row is visible)
+  const badges = [
+    type1El.value,
+    group2El.hidden ? '' : type2El.value,
+  ].filter(Boolean).map(Number);
 
-  const yPos = CANVAS_SIZE - BADGE_SIZE - MARGIN;
+  // Draw badges bottom-left
   let xPos = MARGIN;
+  const yPos = CANVAS_SIZE - BADGE_SIZE - MARGIN;
   badges.forEach(num => {
     drawBadge(num, xPos, yPos, BADGE_SIZE);
     xPos += BADGE_SIZE + GAP;
   });
 }
 
-// ── Event listeners ──
+// ── Events ──
 photoInput.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -129,7 +131,7 @@ photoInput.addEventListener('change', e => {
       userPhoto = img;
       previewWrap.classList.add('has-photo');
       downloadBtn.disabled = false;
-      sync();
+      redraw();
     };
     img.src = ev.target.result;
   };
@@ -149,7 +151,7 @@ previewWrap.addEventListener('drop', e => {
 });
 
 type1El.addEventListener('change', sync);
-type2El.addEventListener('change', sync);
+type2El.addEventListener('change', redraw);
 
 addType2Btn.addEventListener('click', () => {
   group2El.hidden = false;
@@ -161,7 +163,6 @@ addType2Btn.addEventListener('click', () => {
 removeType2.addEventListener('click', () => {
   type2El.value = '';
   group2El.hidden = true;
-  // Show the add button again if type1 has a value
   addType2Btn.hidden = !type1El.value;
   redraw();
 });
@@ -173,5 +174,7 @@ downloadBtn.addEventListener('click', () => {
   link.click();
 });
 
-// ── Init ──
-initType1();
+// ── Init: set explicit hidden states, then populate type1 ──
+group2El.hidden   = true;
+addType2Btn.hidden = true;
+fillSelect(type1El, [], '— Select type —');
